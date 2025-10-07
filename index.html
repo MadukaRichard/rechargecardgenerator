@@ -4,21 +4,119 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recharge card Generator</title>
-</head>
-<body>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <style>
+        body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #e8f5e9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
 
-    <div>
+.container {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  max-width: 420px;
+  width: 100%;
+}
+
+label {
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+select,
+input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+select:focus,
+input[type="text"]:focus {
+  border-color: #43a047;
+  box-shadow: 0 0 5px rgba(67, 160, 71, 0.4);
+  outline: none;
+}
+
+button {
+  width: 100%;
+  background: #43a047;
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+button:hover {
+  background: #2e7d32;
+}
+
+p {
+  font-size: 15px;
+  margin-top: 10px;
+  color: #333;
+}
+
+#thePin {
+  font-weight: bold;
+  color: #c62828;
+}
+
+#output {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #f1f8e9;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+#output p {
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 10px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #1b5e20;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 480px) {
+  .container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+}
+
+    </style>
+</head>
+<body class="bg-success-subtle">
+<div class="container  ">
+    <div >
         <label for="">Pick Provider </label>
             <select name="amount" id="provider">
                 <option value="">Choose Provider</option>
                 <option value="mtn">MTN</option>
                 <option value="glo">GLO</option>
-                <option value="airte">AIRTEL</option>
+                <option value="airtel">AIRTEL</option>
                 <option value="9mobile">9MOBILE</option>
             </select>
        
     </div>
-    <div>
+    <div  class="">
         <label for="">Pick Amount </label>
             <select name="amount" id="amount">
                 <option value="">Choose amount</option>
@@ -29,18 +127,27 @@
             </select>
        
     </div>
-    <button onclick="generatePiin()">generate pin</button>
+    <button onclick="generatePiin() " class="btn btn-primary alert-danger">generate pin</button>
     <p>Pin: <span id="thePin">no pin yet..</span></p>
     <div><label for="">Load card</label>
     <input type="text" id="loadcard" value="*311*pin#"></div>
-    <button onclick="loadRechargeCard()">Load Card</button>
+    <button onclick="loadRechargeCard()" class="btn btn-primary alert-danger ">Load Card</button>
 
     <div id="output">
-       <p id="balance">Balance:</p>
+       <p id="mtnbalance">MTN Balance:</p>
+       <p id="globalance">GLO Balance:</p>
+       <p id="airtelbalance">AIRTEL Balance:</p>
+       <p id="9mobilebalance">9MOBILE Balance:</p>
+       
+    </div>
     </div>
 </body>
 <script>
     let cards =[]
+    let globalance = 0
+    let mtnbalance = 0
+    let airtelbalance = 0
+    let _9mobilebalance = 0
     function generatePiin () {
         let provider = document.getElementById('provider').value;
         let amount = document.getElementById("amount").value;
@@ -61,7 +168,7 @@
         provider,
         amount,
         isUsed: false,
-        balance:0,
+        
        }
        cards.push(card)
        console.log(cards);
@@ -84,19 +191,38 @@
         }
         if (!foundCard) {
                 alert('invalid recharge')
+                return// this this nearly kill me
              }
              if (foundCard.isUsed === true) {
                 alert(`${foundCard.pin} has already been used try another pin inugo?`)
+                return
              }
              else{
                 alert(`You have sucessfully recharged ${foundCard.provider} of ${foundCard.amount}`)
                 foundCard.isUsed = true
-                foundCard.balance = `${foundCard.amount+foundCard.balance}`
-                document.getElementById('balance').innerHTML = `Balance: ${foundCard.balance}`
+                
              }
-               
-             
 
+              
+              if (foundCard.provider ==='mtn') {
+                mtnbalance += +foundCard.amount
+                document.getElementById('mtnbalance').innerHTML = `MTN Balance: ${mtnbalance}`
+                
+             } else if(foundCard.provider ==='glo'){
+                globalance += +foundCard.amount
+                document.getElementById('globalance').innerHTML = `GLO Balance: ${globalance}`
+             }
+             else if(foundCard.provider ==='airtel'){
+               airtelbalance += +foundCard.amount
+                document.getElementById('airtelbalance').innerHTML = `AIRTEL Balance: ${airtelbalance}`
+             }
+             else {
+                _9mobilebalance += +foundCard.amount
+                document.getElementById('9mobilebalance').innerHTML = `9MOBILE Balance: ${_9mobilebalance}`
+             }
+            
+               
+            
              
     }
 </script>
